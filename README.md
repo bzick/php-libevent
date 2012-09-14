@@ -3,6 +3,8 @@ php-libevent
 
 Improved libevent PHP extension
 
+See http://docs.php.net/manual/en/book.libevent.php
+
 Added functions:
 
 ```PHP
