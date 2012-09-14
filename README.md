@@ -5,7 +5,7 @@ Improved libevent PHP extension
 
 See http://docs.php.net/manual/en/book.libevent.php
 
-Added functions:
+__Added functions:__
 
 ```PHP
 /**
@@ -16,9 +16,9 @@ event_base_reinit($base);
 
 ```
 
-Install:
+__Install:__
 
-  phpize
-  ./configure --with-libevent
-  make
-  make install
+    phpize
+    ./configure --with-libevent
+    make
+    make install
