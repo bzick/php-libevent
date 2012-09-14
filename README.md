@@ -15,3 +15,10 @@ Added functions:
 event_base_reinit($base);
 
 ```
+
+Install:
+
+  phpize
+  ./configure --with-libevent
+  make
+  make install
