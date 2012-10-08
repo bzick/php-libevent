@@ -20,7 +20,7 @@ event_base_reinit($base);
  * @param int $size size of bytes, if 0 - read all data
  * @return string
  **/
-event_buffer_read($bevent, $size);
+event_buffer_read($bevent, $size = 0);
 
 /**
  * Read line from buffer by EOL
