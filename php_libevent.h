@@ -28,6 +28,12 @@
 extern zend_module_entry libevent_module_entry;
 #define phpext_libevent_ptr &libevent_module_entry
 
+#define EV_READ_WRITE 		EV_READ | EV_WRITE
+
+#define BEV_WITHOUT_TOKEN 	0
+#define BEV_WITH_TOKEN		1
+#define BEV_TRIM_TOKEN 		2
+
 #ifdef ZTS
 #include "TSRM.h"
 #endif
