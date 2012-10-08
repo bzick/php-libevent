@@ -1234,11 +1234,14 @@ static PHP_FUNCTION(event_buffer_sendfile) {
     zval *zbevent, *zfile;
     php_bufferevent_t *bevent;
     php_stream *stream = NULL;
-    long offset = 0, length = LONG_MAX;
+    long offset = 0, length = 0;
     int fd, fd2;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rr|ll", &zbevent, &zfile, &offset, &length) == FAILURE) {
         return;
+    }
+    if(!length) {
+        length = LONG_MAX;
     }
     ZVAL_TO_BEVENT(zbevent, bevent);
     php_stream_from_zval(stream, &zfile);
@@ -1257,7 +1260,8 @@ static PHP_FUNCTION(event_buffer_sendfile) {
             fd2,
             (ev_off_t) offset,
             (ev_off_t) length
-            )) {
+            )
+    ) {
         RETURN_FALSE;
     }
 
