@@ -36,7 +36,7 @@ event_buffer_readln($bevent, $eol = BEV_EOL_ANY);
  * @param string $token
  * @param int $type one of constants BEV_WITHOUT_TOKEN, BEV_WITH_TOKEN, BEV_TRIM_TOKEN
  * @param string $max_length
- * @return string
+ * @return string|false returns false if token not found
  **/
 event_buffer_gets($bevent, $token, $flag = BEV_TRIM_TOKEN, $max_length = 0);
 
