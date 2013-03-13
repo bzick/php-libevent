@@ -33,6 +33,7 @@
 
 #include <signal.h>
 
+
 #if PHP_VERSION_ID >= 50301 && (HAVE_SOCKETS || defined(COMPILE_DL_SOCKETS))
 #include "ext/sockets/php_sockets.h"
 #define LIBEVENT_SOCKETS_SUPPORT
@@ -1063,10 +1064,10 @@ static PHP_FUNCTION(event_buffer_read) {
     zval *zbevent;
     php_bufferevent_t *bevent;
     char *data;
-    long data_size;
+    long data_size = 0;
     int ret;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &zbevent, &data_size) != SUCCESS) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r|l", &zbevent, &data_size) != SUCCESS) {
         return;
     }
 
@@ -1127,14 +1128,17 @@ static PHP_FUNCTION(event_buffer_gets) {
     struct evbuffer *buffer;
     struct evbuffer_ptr *length_buffer_ptr = NULL, result_ptr;
     char *token, *data;
-    int token_len, max_length = 0, len = 0, ret, flag = BEV_TRIM_TOKEN;
+    int token_len = 0, max_length = 0, len = 0, ret, flag = BEV_TRIM_TOKEN;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs|ll", &zbevent, &token, &token_len, &flag, &max_length) != SUCCESS) {
         return;
     }
 
     if (!token_len) {
-        RETURN_FALSE;
+        token_len = strlen(token); // eh, some times in macos token_len is 0. Put hard code there
+        if(!token_len) {
+            RETURN_FALSE;
+        }
     }
 
     ZVAL_TO_BEVENT(zbevent, bevent);
