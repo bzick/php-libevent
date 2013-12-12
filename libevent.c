@@ -1126,9 +1126,10 @@ static PHP_FUNCTION(event_buffer_gets) {
     zval *zbevent;
     php_bufferevent_t *bevent;
     struct evbuffer *buffer;
-    struct evbuffer_ptr *length_buffer_ptr = NULL, result_ptr;
+    struct evbuffer_ptr length_buffer_ptr, result_ptr;
     char *token, *data;
-    int token_len = 0, max_length = 0, len = 0, ret, flag = BEV_TRIM_TOKEN;
+    int token_len = 0, len = 0, ret;
+    long max_length = 0, flag = BEV_TRIM_TOKEN;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs|ll", &zbevent, &token, &token_len, &flag, &max_length) != SUCCESS) {
         return;
@@ -1146,12 +1147,12 @@ static PHP_FUNCTION(event_buffer_gets) {
     buffer = bufferevent_get_input(bevent->bevent);
 
     if (max_length) {
-        if (evbuffer_ptr_set(buffer, length_buffer_ptr, max_length, EVBUFFER_PTR_SET)) {
+        if (evbuffer_ptr_set(buffer, &length_buffer_ptr, (size_t)max_length, EVBUFFER_PTR_SET)) {
             RETURN_FALSE;
         }
-        result_ptr = evbuffer_search_range(buffer, token, token_len, NULL, length_buffer_ptr);
+        result_ptr = evbuffer_search_range(buffer, token, (size_t)token_len, NULL, &length_buffer_ptr);
     } else {
-        result_ptr = evbuffer_search(buffer, token, token_len, NULL);
+        result_ptr = evbuffer_search(buffer, token, (size_t)token_len, NULL);
     }
 
     if (result_ptr.pos < 0) {
