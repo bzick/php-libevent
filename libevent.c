@@ -1118,7 +1118,9 @@ static PHP_FUNCTION(event_buffer_readln) {
     } else if (len == 0) {
         RETURN_EMPTY_STRING();
     } else {
+        php_printf("\n\nStart event_buffer_readln return\n\n");
         RETURN_STRINGL(data, len, 0);
+        php_printf("\n\nEnd event_buffer_readln return\n\n");
     }
 }
 
@@ -1171,16 +1173,20 @@ static PHP_FUNCTION(event_buffer_gets) {
             len += token_len;
         }
 
-        data = safe_emalloc((int) len + 1, sizeof (char), 1);
+        data = safe_emalloc((int) len, sizeof(char), 1);
+
         ret = bufferevent_read(bevent->bevent, data, len);
+
         if (flag == BEV_TRIM_TOKEN) {
             if (evbuffer_drain(buffer, token_len)) {
                 efree(data);
                 RETURN_FALSE;
             }
         }
+        data[ret] = '\0';
         if (ret > 0) {
-            RETURN_STRINGL(data, len, 0);
+            RETVAL_STRINGL(data, ret, 0);            
+            return;
         }
         efree(data);
         RETURN_EMPTY_STRING();
