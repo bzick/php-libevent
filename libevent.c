@@ -1118,9 +1118,7 @@ static PHP_FUNCTION(event_buffer_readln) {
     } else if (len == 0) {
         RETURN_EMPTY_STRING();
     } else {
-        php_printf("\n\nStart event_buffer_readln return\n\n");
         RETURN_STRINGL(data, len, 0);
-        php_printf("\n\nEnd event_buffer_readln return\n\n");
     }
 }
 
