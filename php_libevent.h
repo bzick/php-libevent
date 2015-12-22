@@ -22,8 +22,8 @@
 #ifndef PHP_LIBEVENT_H
 #define PHP_LIBEVENT_H
 
-#define PHP_LIBEVENT_VERSION "2.1.0"
-#define PHP_LIBEVENT_VERSION_INT 20101
+#define PHP_LIBEVENT_VERSION "2.2.0"
+#define PHP_LIBEVENT_VERSION_INT 20200
 
 extern zend_module_entry libevent_module_entry;
 #define phpext_libevent_ptr &libevent_module_entry

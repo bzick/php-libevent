@@ -126,6 +126,11 @@ typedef struct _php_bufferevent_t { /* {{{ */
 #define ZVAL_TO_BEVENT(zval, bevent) \
 	ZEND_FETCH_RESOURCE(bevent, php_bufferevent_t *, &zval, -1, "buffer event", le_bufferevent)
 
+#define CHECK_LOOP(evbase) \
+    if(EG(exception)) { \
+        event_base_loopbreak(evbase->base);  \
+    }
+
 /* {{{ internal funcs */
 
 static inline void _php_event_callback_free(php_event_callback_t *callback) /* {{{ */ {
@@ -214,7 +219,7 @@ static void _php_bufferevent_dtor(zend_rsrc_list_entry *rsrc TSRMLS_DC) /* {{{ *
 
 static void _php_event_callback(int fd, short events, void *arg) /* {{{ */ {
     zval * args[3];
-    php_event_t *event = (php_event_t *) arg;
+    php_event_t * event = (php_event_t *) arg;
     php_event_callback_t *callback;
     zval retval;
     TSRMLS_FETCH_FROM_CTX(event ? event->thread_ctx : NULL);
@@ -246,7 +251,7 @@ static void _php_event_callback(int fd, short events, void *arg) /* {{{ */ {
     zval_ptr_dtor(&(args[0]));
     zval_ptr_dtor(&(args[1]));
     zval_ptr_dtor(&(args[2]));
-
+    CHECK_LOOP(event->base);
 }
 
 /* }}} */
@@ -274,6 +279,7 @@ static void _php_bufferevent_readcb(struct bufferevent *be, void *arg) /* {{{ */
 
     zval_ptr_dtor(&(args[0]));
     zval_ptr_dtor(&(args[1]));
+    CHECK_LOOP(bevent->base);
 
 }
 
@@ -302,7 +308,7 @@ static void _php_bufferevent_writecb(struct bufferevent *be, void *arg) /* {{{ *
 
     zval_ptr_dtor(&(args[0]));
     zval_ptr_dtor(&(args[1]));
-
+    CHECK_LOOP(bevent->base);
 }
 
 /* }}} */
@@ -334,7 +340,7 @@ static void _php_bufferevent_errorcb(struct bufferevent *be, short what, void *a
     zval_ptr_dtor(&(args[0]));
     zval_ptr_dtor(&(args[1]));
     zval_ptr_dtor(&(args[2]));
-
+    CHECK_LOOP(bevent->base);
 }
 /* }}} */
 
@@ -1450,7 +1456,7 @@ static PHP_MINIT_FUNCTION(libevent) {
     le_event = zend_register_list_destructors_ex(_php_event_dtor, NULL, "event", module_number);
     le_bufferevent = zend_register_list_destructors_ex(_php_bufferevent_dtor, NULL, "buffer event", module_number);
 
-    REGISTER_LONG_CONSTANT("LIBEVENT_VERSION", LIBEVENT_VERSION, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("LIBEVENT_VERSION", LIBEVENT_VERSION_NUMBER, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("EVENT_VERSION", PHP_LIBEVENT_VERSION_INT, CONST_CS | CONST_PERSISTENT);
 
     REGISTER_LONG_CONSTANT("EV_TIMEOUT", EV_TIMEOUT, CONST_CS | CONST_PERSISTENT);
